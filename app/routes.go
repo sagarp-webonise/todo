@@ -1,4 +1,4 @@
-package internal
+package app
 
 // InitRouter will intialise the router
 func (app *App) InitRouter() {

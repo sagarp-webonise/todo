@@ -1,11 +1,11 @@
-package internal
+package app
 
 import (
 	"errors"
 	"io"
 	"net/http"
 
-	"github.com/kaddiya/todo/internal/models"
+	"github.com/kaddiya/todo/app/models"
 	"github.com/kaddiya/todo/pkg/framework"
 )
 

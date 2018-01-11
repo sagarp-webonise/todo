@@ -5,8 +5,7 @@ import (
 	"net/http"
 
 	"github.com/go-zoo/bone"
-	"github.com/kaddiya/todo/internal"
-	"github.com/kaddiya/todo/internal/config"
+	"github.com/kaddiya/todo/app"
 	"github.com/kaddiya/todo/pkg/database"
 	"github.com/kaddiya/todo/pkg/logger"
 	"github.com/kaddiya/todo/pkg/templates"
@@ -37,7 +36,7 @@ func main() {
 		panic("the configuration wasnt enabled")
 	}
 
-	a := &internal.App{
+	a := &app.App{
 		Router:    router,
 		Cfg:       cfg,
 		Log:       log,
@@ -52,8 +51,8 @@ func main() {
 	}
 }
 
-func constructAppConfig() (*config.Config, error) {
-	cfg := &config.Config{
+func constructAppConfig() (*app.Config, error) {
+	cfg := &app.Config{
 		Port: ":9999",
 	}
 	return cfg, nil
