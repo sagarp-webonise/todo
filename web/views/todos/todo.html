@@ -63,7 +63,13 @@
                     Id
                 </th>
                 <th class="text-center">
-                    RoleName
+                    Title
+                </th>
+                <th class="text-center">
+                    Done
+                </th>
+                <th class="text-center">
+                    Due Date
                 </th>
             </tr>
             </thead>
@@ -75,7 +81,13 @@
                     {{.ID}}
                 </td>
                 <td width="300" style="padding-top:20px;">
-                    {{.RoleName}}
+                    {{.Title}}
+                </td>
+                <td width="300" style="padding-top:30px;">
+                    {{.Done}}
+                </td>
+                <td width="300" style="padding-top:20px;">
+                    {{.DueDate}}
                 </td>
             </tr>
             {{end}}
