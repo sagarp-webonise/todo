@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>todo Admin</title>
+    <link rel="shortcut icon" href="/img/favicon.ico">
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"/>
+      <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+      <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+      <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <style>
+        .navbar {
+            background-color :#3097D1 !important;
+            border-radius: 0;
+        }
+
+        .navbar-default .navbar-nav>li>a {
+            color:floralwhite;
+        }
+
+        .logo img{
+            display:inline-block;
+            max-width: 85px;
+        }
+
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-default menubar" role="navigation">
+      <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="logo">
+
+            </a>
+        </div>
+        <div class="collapse navbar-collapse">
+        </div>
+      </div>
+    </nav>
+    <nav class="navbar navbar-default navbar-fixed-bottom footer">
+      <div class="container-fluid">
+        <h6 align="center" style="padding-top: 8px;">
+          © todo 2017. All rights reserved.
+        </h6>
+      </div>
+    </nav>
+    <div class="container">
+      {{ template "content" . }}
+    </div>
+  </body>
+</html>

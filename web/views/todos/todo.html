@@ -1,0 +1,100 @@
+{{ define "content" }}
+<html>
+<head>
+    <meta charset="utf-8">
+    <title> Dashboard </title>
+    <style>
+         .gly-ani {
+            animation: ani 2s infinite linear;
+         }
+         @keyframes ani {
+             0% {
+                transform: rotate(0deg);
+             }
+             100% {
+                transform: rotate(359deg);
+             }
+         }
+         .loader {
+             display : none;
+             position: fixed;
+             top:  0;
+             left: 0;
+             right: 0;
+             bottom: 0;
+             background: rgba(0,0,0,0.3);
+             z-index: 9999;
+         }
+         .loader span {
+            position: fixed;
+            top: 30%;
+            left: 50%;
+         }
+         .modal {
+             display: none;
+             z-index: 1050;
+             width:100%;
+             top: 25%;
+             height:100%;
+             position:fixed;
+         }
+
+        .inactiveContainer {
+            color: #dc2020;
+        }
+
+        .activeContainer{
+            color: rgba(0, 128, 122, 0.65);
+
+        }
+    </style>
+</head>
+<body>
+<div id="loaderFrame" class="loader">
+    <span class="glyphicon glyphicon-refresh gly-ani" style="font-size:40px;"></span>
+</div>
+<div id="main" class="container-fluid" style="margin-bottom: 5%;">
+    <div>
+        <table border="1" cellpadding="0" cellspacing="3" align="center" class="tableWrap table table-condensed table-hover table-responsive" >
+            <thead align="center">
+            <tr  align="center">
+
+                <th class="text-center">
+                    Id
+                </th>
+                <th class="text-center">
+                    Title
+                </th>
+                <th class="text-center">
+                    Done
+                </th>
+                <th class="text-center">
+                    Due Date
+                </th>
+            </tr>
+            </thead>
+            <tbody align="center" >
+            {{range .Roles}}
+            <tr class="text-center">
+
+                <td width="300" style="padding-top:30px;">
+                    {{.ID}}
+                </td>
+                <td width="300" style="padding-top:20px;">
+                    {{.Title}}
+                </td>
+                <td width="300" style="padding-top:30px;">
+                    {{.Done}}
+                </td>
+                <td width="300" style="padding-top:20px;">
+                    {{.DueDate}}
+                </td>
+            </tr>
+            {{end}}
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>
+{{end}}
