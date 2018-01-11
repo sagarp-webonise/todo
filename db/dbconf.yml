@@ -1,0 +1,7 @@
+test:
+  driver: postgres
+  open: user=test dbname=todo sslmode=disable
+
+development:
+  driver: postgres
+  open: user=local password=local dbname=todo sslmode=disable
