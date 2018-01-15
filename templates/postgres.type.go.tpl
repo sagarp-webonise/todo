@@ -16,17 +16,17 @@ type {{ .Name }} struct {
 {{ end }}
 }
 
-type {{ .Name }}Service interface {
+type {{ .Name }}CrudService interface {
 	 Does{{ .Name }}Exist({{ $short }} *{{ .Name }})(bool,error)
 	 Insert{{ .Name}}({{ $short }} *{{ .Name }},db XODB)(error)
 	 Update{{ .Name}}({{ $short }} *{{ .Name }},db XODB)(error)
 	 Upsert{{ .Name }}({{ $short }} *{{ .Name }},db XODB) (error)
 	 Delete{{ .Name }}({{ $short }} *{{ .Name }},db XODB) (error)
 	 GetAll{{ .Name }}s(db XODB) ([]*{{ .Name }}, error)
-	 GetChunked{{ .Name }}s(db XODB, limit int,offset int) ([]*{{ .Name }}, error) 
+	 GetChunked{{ .Name }}s(db XODB, limit int,offset int) ([]*{{ .Name }}, error)
 }
 
-type {{ .Name }}ServiceImpl struct {
+type {{ .Name }}CrudServiceImpl struct {
 
 }
 
