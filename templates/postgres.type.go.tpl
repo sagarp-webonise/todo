@@ -16,7 +16,7 @@ type {{ .Name }} struct {
 {{ end }}
 }
 
-type {{ .Name }}CrudService interface {
+type {{ .Name }}Service interface {
 	 Does{{ .Name }}Exist({{ $short }} *{{ .Name }})(bool,error)
 	 Insert{{ .Name}}({{ $short }} *{{ .Name }},db XODB)(error)
 	 Update{{ .Name}}({{ $short }} *{{ .Name }},db XODB)(error)
@@ -26,7 +26,7 @@ type {{ .Name }}CrudService interface {
 	 GetChunked{{ .Name }}s(db XODB, limit int,offset int) ([]*{{ .Name }}, error)
 }
 
-type {{ .Name }}CrudServiceImpl struct {
+type {{ .Name }}ServiceImpl struct {
 
 }
 
