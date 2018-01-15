@@ -18,6 +18,12 @@ type {{ .Name }} struct {
 
 type {{ .Name }}Service interface {
 	 Does{{ .Name }}Exist({{ $short }} *{{ .Name }})(bool,error)
+	 Insert{{ .Name}}({{ $short }} *{{ .Name }},db XODB)(error)
+	 Update{{ .Name}}({{ $short }} *{{ .Name }},db XODB)(error)
+	 Upsert{{ .Name }}({{ $short }} *{{ .Name }},db XODB) (error)
+	 Delete{{ .Name }}({{ $short }} *{{ .Name }},db XODB) (error)
+	 GetAll{{ .Name }}s(db XODB) ([]*{{ .Name }}, error)
+	 GetChunked{{ .Name }}s(db XODB, limit int,offset int) ([]*{{ .Name }}, error) 
 }
 
 type {{ .Name }}ServiceImpl struct {
@@ -30,13 +36,9 @@ func ( serviceImpl *{{ .Name }}ServiceImpl) Exists({{ $short }} *{{ .Name }}) (b
 		panic("not yet implemented")
 }
 
-// Deleted provides information if the {{ .Name }} has been deleted from the database.
-func ({{ $short }} *{{ .Name }}) Deleted() bool {
-	return {{ $short }}._deleted
-}
 
 // Insert inserts the {{ .Name }} to the database.
-func ({{ $short }} *{{ .Name }}) Insert(db XODB) error {
+func (serviceImpl *{{ .Name }}ServiceImpl) Insert{{ .Name }}({{ $short }} *{{ .Name }},db XODB) error {
 	var err error
 
 	// if already exist, bail
@@ -82,7 +84,7 @@ func ({{ $short }} *{{ .Name }}) Insert(db XODB) error {
 
 {{ if ne (fieldnamesmulti .Fields $short .PrimaryKeyFields) "" }}
 	// Update updates the {{ .Name }} in the database.
-	func ({{ $short }} *{{ .Name }}) Update(db XODB) error {
+	func (serviceImpl *{{ .Name }}ServiceImpl) Update{{ .Name }}({{ $short }} *{{ .Name }},db XODB) error {
 		var err error
 
 		// if doesn't exist, bail
@@ -136,7 +138,7 @@ func ({{ $short }} *{{ .Name }}) Insert(db XODB) error {
 	// Upsert performs an upsert for {{ .Name }}.
 	//
 	// NOTE: PostgreSQL 9.5+ only
-	func ({{ $short }} *{{ .Name }}) Upsert(db XODB) error {
+	func (serviceImpl *{{ .Name }}ServiceImpl) Upsert{{ .Name }}({{ $short }} *{{ .Name }},db XODB) error {
 		var err error
 
 		// if already exist, bail
@@ -172,7 +174,7 @@ func ({{ $short }} *{{ .Name }}) Insert(db XODB) error {
 {{ end }}
 
 // Delete deletes the {{ .Name }} from the database.
-func ({{ $short }} *{{ .Name }}) Delete(db XODB) error {
+func (serviceImpl *{{ .Name }}ServiceImpl) Delete{{ .Name }}({{ $short }} *{{ .Name }},db XODB) error {
 	var err error
 
 	// if doesn't exist, bail
@@ -215,7 +217,7 @@ func ({{ $short }} *{{ .Name }}) Delete(db XODB) error {
 
 // GetAll{{ .Name }}s returns all rows from '{{ .Schema }}.{{ .Table.TableName }}',
 // ordered by "created_at" in descending order.
-func GetAll{{ .Name }}s(db XODB) ([]*{{ .Name }}, error) {
+func (erviceImpl *{{ .Name }}ServiceImpl)GetAll{{ .Name }}s(db XODB) ([]*{{ .Name }}, error) {
     const sqlstr = `SELECT ` +
         `*` +
         `FROM {{ $table }}`
@@ -245,7 +247,7 @@ func GetAll{{ .Name }}s(db XODB) ([]*{{ .Name }}, error) {
 
 // GetChunked{{ .Name }}s returns pagingated rows from '{{ .Schema }}.{{ .Table.TableName }}',
 // ordered by "created_at" in descending order.
-func GetChunked{{ .Name }}s(db XODB, limit int,offset int) ([]*{{ .Name }}, error) {
+func(serviceImpl *{{ .Name }}ServiceImpl) GetChunked{{ .Name }}s(db XODB, limit int,offset int) ([]*{{ .Name }}, error) {
     const sqlstr = `SELECT ` +
         `*` +
         `FROM {{ $table }} LIMIT $1 OFFSET $2`

@@ -22,6 +22,12 @@ type GooseDbVersion struct {
 
 type GooseDbVersionService interface {
 	DoesGooseDbVersionExist(gdv *GooseDbVersion) (bool, error)
+	InsertGooseDbVersion(gdv *GooseDbVersion, db XODB) error
+	UpdateGooseDbVersion(gdv *GooseDbVersion, db XODB) error
+	UpsertGooseDbVersion(gdv *GooseDbVersion, db XODB) error
+	DeleteGooseDbVersion(gdv *GooseDbVersion, db XODB) error
+	GetAllGooseDbVersions(db XODB) ([]*GooseDbVersion, error)
+	GetChunkedGooseDbVersions(db XODB, limit int, offset int) ([]*GooseDbVersion, error)
 }
 
 type GooseDbVersionServiceImpl struct {
@@ -32,13 +38,8 @@ func (serviceImpl *GooseDbVersionServiceImpl) Exists(gdv *GooseDbVersion) (bool,
 	panic("not yet implemented")
 }
 
-// Deleted provides information if the GooseDbVersion has been deleted from the database.
-func (gdv *GooseDbVersion) Deleted() bool {
-	return gdv._deleted
-}
-
 // Insert inserts the GooseDbVersion to the database.
-func (gdv *GooseDbVersion) Insert(db XODB) error {
+func (serviceImpl *GooseDbVersionServiceImpl) InsertGooseDbVersion(gdv *GooseDbVersion, db XODB) error {
 	var err error
 
 	// if already exist, bail
@@ -67,7 +68,7 @@ func (gdv *GooseDbVersion) Insert(db XODB) error {
 }
 
 // Update updates the GooseDbVersion in the database.
-func (gdv *GooseDbVersion) Update(db XODB) error {
+func (serviceImpl *GooseDbVersionServiceImpl) UpdateGooseDbVersion(gdv *GooseDbVersion, db XODB) error {
 	var err error
 
 	// if doesn't exist, bail
@@ -107,7 +108,7 @@ func (gdv *GooseDbVersion) Update(db XODB) error {
 // Upsert performs an upsert for GooseDbVersion.
 //
 // NOTE: PostgreSQL 9.5+ only
-func (gdv *GooseDbVersion) Upsert(db XODB) error {
+func (serviceImpl *GooseDbVersionServiceImpl) UpsertGooseDbVersion(gdv *GooseDbVersion, db XODB) error {
 	var err error
 
 	// if already exist, bail
@@ -140,7 +141,7 @@ func (gdv *GooseDbVersion) Upsert(db XODB) error {
 }
 
 // Delete deletes the GooseDbVersion from the database.
-func (gdv *GooseDbVersion) Delete(db XODB) error {
+func (serviceImpl *GooseDbVersionServiceImpl) DeleteGooseDbVersion(gdv *GooseDbVersion, db XODB) error {
 	var err error
 
 	// if doesn't exist, bail
@@ -171,7 +172,7 @@ func (gdv *GooseDbVersion) Delete(db XODB) error {
 
 // GetAllGooseDbVersions returns all rows from 'public.goose_db_version',
 // ordered by "created_at" in descending order.
-func GetAllGooseDbVersions(db XODB) ([]*GooseDbVersion, error) {
+func (erviceImpl *GooseDbVersionServiceImpl) GetAllGooseDbVersions(db XODB) ([]*GooseDbVersion, error) {
 	const sqlstr = `SELECT ` +
 		`*` +
 		`FROM public.goose_db_version`
@@ -201,7 +202,7 @@ func GetAllGooseDbVersions(db XODB) ([]*GooseDbVersion, error) {
 
 // GetChunkedGooseDbVersions returns pagingated rows from 'public.goose_db_version',
 // ordered by "created_at" in descending order.
-func GetChunkedGooseDbVersions(db XODB, limit int, offset int) ([]*GooseDbVersion, error) {
+func (serviceImpl *GooseDbVersionServiceImpl) GetChunkedGooseDbVersions(db XODB, limit int, offset int) ([]*GooseDbVersion, error) {
 	const sqlstr = `SELECT ` +
 		`*` +
 		`FROM public.goose_db_version LIMIT $1 OFFSET $2`

@@ -23,6 +23,12 @@ type Todo struct {
 
 type TodoService interface {
 	DoesTodoExist(t *Todo) (bool, error)
+	InsertTodo(t *Todo, db XODB) error
+	UpdateTodo(t *Todo, db XODB) error
+	UpsertTodo(t *Todo, db XODB) error
+	DeleteTodo(t *Todo, db XODB) error
+	GetAllTodos(db XODB) ([]*Todo, error)
+	GetChunkedTodos(db XODB, limit int, offset int) ([]*Todo, error)
 }
 
 type TodoServiceImpl struct {
@@ -33,13 +39,8 @@ func (serviceImpl *TodoServiceImpl) Exists(t *Todo) (bool, error) {
 	panic("not yet implemented")
 }
 
-// Deleted provides information if the Todo has been deleted from the database.
-func (t *Todo) Deleted() bool {
-	return t._deleted
-}
-
 // Insert inserts the Todo to the database.
-func (t *Todo) Insert(db XODB) error {
+func (serviceImpl *TodoServiceImpl) InsertTodo(t *Todo, db XODB) error {
 	var err error
 
 	// if already exist, bail
@@ -68,7 +69,7 @@ func (t *Todo) Insert(db XODB) error {
 }
 
 // Update updates the Todo in the database.
-func (t *Todo) Update(db XODB) error {
+func (serviceImpl *TodoServiceImpl) UpdateTodo(t *Todo, db XODB) error {
 	var err error
 
 	// if doesn't exist, bail
@@ -108,7 +109,7 @@ func (t *Todo) Update(db XODB) error {
 // Upsert performs an upsert for Todo.
 //
 // NOTE: PostgreSQL 9.5+ only
-func (t *Todo) Upsert(db XODB) error {
+func (serviceImpl *TodoServiceImpl) UpsertTodo(t *Todo, db XODB) error {
 	var err error
 
 	// if already exist, bail
@@ -141,7 +142,7 @@ func (t *Todo) Upsert(db XODB) error {
 }
 
 // Delete deletes the Todo from the database.
-func (t *Todo) Delete(db XODB) error {
+func (serviceImpl *TodoServiceImpl) DeleteTodo(t *Todo, db XODB) error {
 	var err error
 
 	// if doesn't exist, bail
@@ -172,7 +173,7 @@ func (t *Todo) Delete(db XODB) error {
 
 // GetAllTodos returns all rows from 'public.todo',
 // ordered by "created_at" in descending order.
-func GetAllTodos(db XODB) ([]*Todo, error) {
+func (erviceImpl *TodoServiceImpl) GetAllTodos(db XODB) ([]*Todo, error) {
 	const sqlstr = `SELECT ` +
 		`*` +
 		`FROM public.todo`
@@ -202,7 +203,7 @@ func GetAllTodos(db XODB) ([]*Todo, error) {
 
 // GetChunkedTodos returns pagingated rows from 'public.todo',
 // ordered by "created_at" in descending order.
-func GetChunkedTodos(db XODB, limit int, offset int) ([]*Todo, error) {
+func (serviceImpl *TodoServiceImpl) GetChunkedTodos(db XODB, limit int, offset int) ([]*Todo, error) {
 	const sqlstr = `SELECT ` +
 		`*` +
 		`FROM public.todo LIMIT $1 OFFSET $2`
