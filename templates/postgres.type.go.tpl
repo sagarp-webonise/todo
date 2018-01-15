@@ -16,10 +16,18 @@ type {{ .Name }} struct {
 {{ end }}
 }
 
+type {{ .Name }}Service interface {
+	 Does{{ .Name }}Exist({{ $short }} *{{ .Name }})(bool,error)
+}
+
+type {{ .Name }}ServiceImpl struct {
+
+}
+
 {{ if .PrimaryKey }}
 // Exists determines if the {{ .Name }} exists in the database.
-func ({{ $short }} *{{ .Name }}) Exists() bool {
-	return {{ $short }}._exists
+func ( serviceImpl *{{ .Name }}ServiceImpl) Exists({{ $short }} *{{ .Name }}) (bool,error) {
+		panic("not yet implemented")
 }
 
 // Deleted provides information if the {{ .Name }} has been deleted from the database.
@@ -115,6 +123,7 @@ func ({{ $short }} *{{ .Name }}) Insert(db XODB) error {
 	}
 
 	// Save saves the {{ .Name }} to the database.
+	/*
 	func ({{ $short }} *{{ .Name }}) Save(db XODB) error {
 		if {{ $short }}.Exists() {
 			return {{ $short }}.Update(db)
@@ -122,6 +131,7 @@ func ({{ $short }} *{{ .Name }}) Insert(db XODB) error {
 
 		return {{ $short }}.Insert(db)
 	}
+	*/
 
 	// Upsert performs an upsert for {{ .Name }}.
 	//
