@@ -6,6 +6,7 @@ import (
 
 	"github.com/go-zoo/bone"
 	"github.com/kaddiya/todo/app"
+	"github.com/kaddiya/todo/app/exp"
 	"github.com/kaddiya/todo/pkg/database"
 	"github.com/kaddiya/todo/pkg/logger"
 	"github.com/kaddiya/todo/pkg/templates"
@@ -37,11 +38,12 @@ func main() {
 	}
 
 	a := &app.App{
-		Router:    router,
-		Cfg:       cfg,
-		Log:       log,
-		TplParser: &templates.TemplateParser{},
-		DB:        dbConn,
+		Router:         router,
+		Cfg:            cfg,
+		Log:            log,
+		TplParser:      &templates.TemplateParser{},
+		DB:             dbConn,
+		TodoSeviceImpl: &exp.TodoServiceImpl{DB: dbConn},
 	}
 
 	a.InitRouter()

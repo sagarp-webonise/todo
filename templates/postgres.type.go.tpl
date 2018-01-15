@@ -17,28 +17,28 @@ type {{ .Name }} struct {
 }
 
 type {{ .Name }}Service interface {
-	 Does{{ .Name }}Exist({{ $short }} *{{ .Name }})(bool,error)
-	 Insert{{ .Name}}({{ $short }} *{{ .Name }},db XODB)(error)
-	 Update{{ .Name}}({{ $short }} *{{ .Name }},db XODB)(error)
-	 Upsert{{ .Name }}({{ $short }} *{{ .Name }},db XODB) (error)
-	 Delete{{ .Name }}({{ $short }} *{{ .Name }},db XODB) (error)
-	 GetAll{{ .Name }}s(db XODB) ([]*{{ .Name }}, error)
-	 GetChunked{{ .Name }}s(db XODB, limit int,offset int) ([]*{{ .Name }}, error)
+	 Does{{ .Name }}Exists({{ $short }} *{{ .Name }})(bool,error)
+	 Insert{{ .Name}}({{ $short }} *{{ .Name }})(error)
+	 Update{{ .Name}}({{ $short }} *{{ .Name }})(error)
+	 Upsert{{ .Name }}({{ $short }} *{{ .Name }}) (error)
+	 Delete{{ .Name }}({{ $short }} *{{ .Name }}) (error)
+	 GetAll{{ .Name }}s() ([]*{{ .Name }}, error)
+	 GetChunked{{ .Name }}s(limit int,offset int) ([]*{{ .Name }}, error)
 }
 
 type {{ .Name }}ServiceImpl struct {
-
+		DB XODB
 }
 
 {{ if .PrimaryKey }}
 // Exists determines if the {{ .Name }} exists in the database.
-func ( serviceImpl *{{ .Name }}ServiceImpl) Exists({{ $short }} *{{ .Name }}) (bool,error) {
+func ( serviceImpl *{{ .Name }}ServiceImpl) Does{{.Name}}Exists({{ $short }} *{{ .Name }}) (bool,error) {
 		panic("not yet implemented")
 }
 
 
 // Insert inserts the {{ .Name }} to the database.
-func (serviceImpl *{{ .Name }}ServiceImpl) Insert{{ .Name }}({{ $short }} *{{ .Name }},db XODB) error {
+func (serviceImpl *{{ .Name }}ServiceImpl) Insert{{ .Name }}({{ $short }} *{{ .Name }}) error {
 	var err error
 
 	// if already exist, bail
@@ -56,7 +56,7 @@ func (serviceImpl *{{ .Name }}ServiceImpl) Insert{{ .Name }}({{ $short }} *{{ .N
 
 	// run query
 	XOLog(sqlstr, {{ fieldnames .Fields $short }})
-	err = db.QueryRow(sqlstr, {{ fieldnames .Fields $short }}).Scan(&{{ $short }}.{{ .PrimaryKey.Name }})
+	err = serviceImpl.DB.QueryRow(sqlstr, {{ fieldnames .Fields $short }}).Scan(&{{ $short }}.{{ .PrimaryKey.Name }})
 	if err != nil {
 		return err
 	}
@@ -70,7 +70,7 @@ func (serviceImpl *{{ .Name }}ServiceImpl) Insert{{ .Name }}({{ $short }} *{{ .N
 
 	// run query
 	XOLog(sqlstr, {{ fieldnames .Fields $short .PrimaryKey.Name }})
-	err = db.QueryRow(sqlstr, {{ fieldnames .Fields $short .PrimaryKey.Name }}).Scan(&{{ $short }}.{{ .PrimaryKey.Name }})
+	err = serviceImpl.DB.QueryRow(sqlstr, {{ fieldnames .Fields $short .PrimaryKey.Name }}).Scan(&{{ $short }}.{{ .PrimaryKey.Name }})
 	if err != nil {
 		return err
 	}
@@ -84,7 +84,7 @@ func (serviceImpl *{{ .Name }}ServiceImpl) Insert{{ .Name }}({{ $short }} *{{ .N
 
 {{ if ne (fieldnamesmulti .Fields $short .PrimaryKeyFields) "" }}
 	// Update updates the {{ .Name }} in the database.
-	func (serviceImpl *{{ .Name }}ServiceImpl) Update{{ .Name }}({{ $short }} *{{ .Name }},db XODB) error {
+	func (serviceImpl *{{ .Name }}ServiceImpl) Update{{ .Name }}({{ $short }} *{{ .Name }}) error {
 		var err error
 
 		// if doesn't exist, bail
@@ -107,7 +107,7 @@ func (serviceImpl *{{ .Name }}ServiceImpl) Insert{{ .Name }}({{ $short }} *{{ .N
 
 			// run query
 			XOLog(sqlstr, {{ fieldnamesmulti .Fields $short .PrimaryKeyFields }}, {{ fieldnames .PrimaryKeyFields $short}})
-			_, err = db.Exec(sqlstr, {{ fieldnamesmulti .Fields $short .PrimaryKeyFields }}, {{ fieldnames .PrimaryKeyFields $short}})
+			_, err = serviceImpl.DB.Exec(sqlstr, {{ fieldnamesmulti .Fields $short .PrimaryKeyFields }}, {{ fieldnames .PrimaryKeyFields $short}})
 		return err
 		{{- else }}
 			// sql query
@@ -119,7 +119,7 @@ func (serviceImpl *{{ .Name }}ServiceImpl) Insert{{ .Name }}({{ $short }} *{{ .N
 
 			// run query
 			XOLog(sqlstr, {{ fieldnames .Fields $short .PrimaryKey.Name }}, {{ $short }}.{{ .PrimaryKey.Name }})
-			_, err = db.Exec(sqlstr, {{ fieldnames .Fields $short .PrimaryKey.Name }}, {{ $short }}.{{ .PrimaryKey.Name }})
+			_, err = serviceImpl.DB.Exec(sqlstr, {{ fieldnames .Fields $short .PrimaryKey.Name }}, {{ $short }}.{{ .PrimaryKey.Name }})
 			return err
 		{{- end }}
 	}
@@ -138,7 +138,7 @@ func (serviceImpl *{{ .Name }}ServiceImpl) Insert{{ .Name }}({{ $short }} *{{ .N
 	// Upsert performs an upsert for {{ .Name }}.
 	//
 	// NOTE: PostgreSQL 9.5+ only
-	func (serviceImpl *{{ .Name }}ServiceImpl) Upsert{{ .Name }}({{ $short }} *{{ .Name }},db XODB) error {
+	func (serviceImpl *{{ .Name }}ServiceImpl) Upsert{{ .Name }}({{ $short }} *{{ .Name }}) error {
 		var err error
 
 		// if already exist, bail
@@ -159,7 +159,7 @@ func (serviceImpl *{{ .Name }}ServiceImpl) Insert{{ .Name }}({{ $short }} *{{ .N
 
 		// run query
 		XOLog(sqlstr, {{ fieldnames .Fields $short }})
-		_, err = db.Exec(sqlstr, {{ fieldnames .Fields $short }})
+		_, err = serviceImpl.DB.Exec(sqlstr, {{ fieldnames .Fields $short }})
 		if err != nil {
 			return err
 		}
@@ -174,7 +174,7 @@ func (serviceImpl *{{ .Name }}ServiceImpl) Insert{{ .Name }}({{ $short }} *{{ .N
 {{ end }}
 
 // Delete deletes the {{ .Name }} from the database.
-func (serviceImpl *{{ .Name }}ServiceImpl) Delete{{ .Name }}({{ $short }} *{{ .Name }},db XODB) error {
+func (serviceImpl *{{ .Name }}ServiceImpl) Delete{{ .Name }}({{ $short }} *{{ .Name }}) error {
 	var err error
 
 	// if doesn't exist, bail
@@ -193,7 +193,7 @@ func (serviceImpl *{{ .Name }}ServiceImpl) Delete{{ .Name }}({{ $short }} *{{ .N
 
 		// run query
 		XOLog(sqlstr, {{ fieldnames .PrimaryKeyFields $short }})
-		_, err = db.Exec(sqlstr, {{ fieldnames .PrimaryKeyFields $short }})
+		_, err = serviceImpl.DB.Exec(sqlstr, {{ fieldnames .PrimaryKeyFields $short }})
 		if err != nil {
 			return err
 		}
@@ -203,7 +203,7 @@ func (serviceImpl *{{ .Name }}ServiceImpl) Delete{{ .Name }}({{ $short }} *{{ .N
 
 		// run query
 		XOLog(sqlstr, {{ $short }}.{{ .PrimaryKey.Name }})
-		_, err = db.Exec(sqlstr, {{ $short }}.{{ .PrimaryKey.Name }})
+		_, err = serviceImpl.DB.Exec(sqlstr, {{ $short }}.{{ .PrimaryKey.Name }})
 		if err != nil {
 			return err
 		}
@@ -217,12 +217,12 @@ func (serviceImpl *{{ .Name }}ServiceImpl) Delete{{ .Name }}({{ $short }} *{{ .N
 
 // GetAll{{ .Name }}s returns all rows from '{{ .Schema }}.{{ .Table.TableName }}',
 // ordered by "created_at" in descending order.
-func (erviceImpl *{{ .Name }}ServiceImpl)GetAll{{ .Name }}s(db XODB) ([]*{{ .Name }}, error) {
+func (serviceImpl *{{ .Name }}ServiceImpl)GetAll{{ .Name }}s() ([]*{{ .Name }}, error) {
     const sqlstr = `SELECT ` +
         `*` +
         `FROM {{ $table }}`
 
-    q, err := db.Query(sqlstr)
+    q, err := serviceImpl.DB.Query(sqlstr)
     if err != nil {
         return nil, err
     }
@@ -247,12 +247,12 @@ func (erviceImpl *{{ .Name }}ServiceImpl)GetAll{{ .Name }}s(db XODB) ([]*{{ .Nam
 
 // GetChunked{{ .Name }}s returns pagingated rows from '{{ .Schema }}.{{ .Table.TableName }}',
 // ordered by "created_at" in descending order.
-func(serviceImpl *{{ .Name }}ServiceImpl) GetChunked{{ .Name }}s(db XODB, limit int,offset int) ([]*{{ .Name }}, error) {
+func(serviceImpl *{{ .Name }}ServiceImpl) GetChunked{{ .Name }}s(limit int,offset int) ([]*{{ .Name }}, error) {
     const sqlstr = `SELECT ` +
         `*` +
         `FROM {{ $table }} LIMIT $1 OFFSET $2`
 
-    q, err := db.Query(sqlstr, limit,offset)
+    q, err := serviceImpl.DB.Query(sqlstr, limit,offset)
     if err != nil {
         return nil, err
     }

@@ -21,25 +21,26 @@ type GooseDbVersion struct {
 }
 
 type GooseDbVersionService interface {
-	DoesGooseDbVersionExist(gdv *GooseDbVersion) (bool, error)
-	InsertGooseDbVersion(gdv *GooseDbVersion, db XODB) error
-	UpdateGooseDbVersion(gdv *GooseDbVersion, db XODB) error
-	UpsertGooseDbVersion(gdv *GooseDbVersion, db XODB) error
-	DeleteGooseDbVersion(gdv *GooseDbVersion, db XODB) error
-	GetAllGooseDbVersions(db XODB) ([]*GooseDbVersion, error)
-	GetChunkedGooseDbVersions(db XODB, limit int, offset int) ([]*GooseDbVersion, error)
+	DoesGooseDbVersionExists(gdv *GooseDbVersion) (bool, error)
+	InsertGooseDbVersion(gdv *GooseDbVersion) error
+	UpdateGooseDbVersion(gdv *GooseDbVersion) error
+	UpsertGooseDbVersion(gdv *GooseDbVersion) error
+	DeleteGooseDbVersion(gdv *GooseDbVersion) error
+	GetAllGooseDbVersions() ([]*GooseDbVersion, error)
+	GetChunkedGooseDbVersions(limit int, offset int) ([]*GooseDbVersion, error)
 }
 
 type GooseDbVersionServiceImpl struct {
+	DB XODB
 }
 
 // Exists determines if the GooseDbVersion exists in the database.
-func (serviceImpl *GooseDbVersionServiceImpl) Exists(gdv *GooseDbVersion) (bool, error) {
+func (serviceImpl *GooseDbVersionServiceImpl) DoesGooseDbVersionExists(gdv *GooseDbVersion) (bool, error) {
 	panic("not yet implemented")
 }
 
 // Insert inserts the GooseDbVersion to the database.
-func (serviceImpl *GooseDbVersionServiceImpl) InsertGooseDbVersion(gdv *GooseDbVersion, db XODB) error {
+func (serviceImpl *GooseDbVersionServiceImpl) InsertGooseDbVersion(gdv *GooseDbVersion) error {
 	var err error
 
 	// if already exist, bail
@@ -56,7 +57,7 @@ func (serviceImpl *GooseDbVersionServiceImpl) InsertGooseDbVersion(gdv *GooseDbV
 
 	// run query
 	XOLog(sqlstr, gdv.VersionID, gdv.IsApplied, gdv.Tstamp)
-	err = db.QueryRow(sqlstr, gdv.VersionID, gdv.IsApplied, gdv.Tstamp).Scan(&gdv.ID)
+	err = serviceImpl.DB.QueryRow(sqlstr, gdv.VersionID, gdv.IsApplied, gdv.Tstamp).Scan(&gdv.ID)
 	if err != nil {
 		return err
 	}
@@ -68,7 +69,7 @@ func (serviceImpl *GooseDbVersionServiceImpl) InsertGooseDbVersion(gdv *GooseDbV
 }
 
 // Update updates the GooseDbVersion in the database.
-func (serviceImpl *GooseDbVersionServiceImpl) UpdateGooseDbVersion(gdv *GooseDbVersion, db XODB) error {
+func (serviceImpl *GooseDbVersionServiceImpl) UpdateGooseDbVersion(gdv *GooseDbVersion) error {
 	var err error
 
 	// if doesn't exist, bail
@@ -90,7 +91,7 @@ func (serviceImpl *GooseDbVersionServiceImpl) UpdateGooseDbVersion(gdv *GooseDbV
 
 	// run query
 	XOLog(sqlstr, gdv.VersionID, gdv.IsApplied, gdv.Tstamp, gdv.ID)
-	_, err = db.Exec(sqlstr, gdv.VersionID, gdv.IsApplied, gdv.Tstamp, gdv.ID)
+	_, err = serviceImpl.DB.Exec(sqlstr, gdv.VersionID, gdv.IsApplied, gdv.Tstamp, gdv.ID)
 	return err
 }
 
@@ -108,7 +109,7 @@ func (serviceImpl *GooseDbVersionServiceImpl) UpdateGooseDbVersion(gdv *GooseDbV
 // Upsert performs an upsert for GooseDbVersion.
 //
 // NOTE: PostgreSQL 9.5+ only
-func (serviceImpl *GooseDbVersionServiceImpl) UpsertGooseDbVersion(gdv *GooseDbVersion, db XODB) error {
+func (serviceImpl *GooseDbVersionServiceImpl) UpsertGooseDbVersion(gdv *GooseDbVersion) error {
 	var err error
 
 	// if already exist, bail
@@ -129,7 +130,7 @@ func (serviceImpl *GooseDbVersionServiceImpl) UpsertGooseDbVersion(gdv *GooseDbV
 
 	// run query
 	XOLog(sqlstr, gdv.ID, gdv.VersionID, gdv.IsApplied, gdv.Tstamp)
-	_, err = db.Exec(sqlstr, gdv.ID, gdv.VersionID, gdv.IsApplied, gdv.Tstamp)
+	_, err = serviceImpl.DB.Exec(sqlstr, gdv.ID, gdv.VersionID, gdv.IsApplied, gdv.Tstamp)
 	if err != nil {
 		return err
 	}
@@ -141,7 +142,7 @@ func (serviceImpl *GooseDbVersionServiceImpl) UpsertGooseDbVersion(gdv *GooseDbV
 }
 
 // Delete deletes the GooseDbVersion from the database.
-func (serviceImpl *GooseDbVersionServiceImpl) DeleteGooseDbVersion(gdv *GooseDbVersion, db XODB) error {
+func (serviceImpl *GooseDbVersionServiceImpl) DeleteGooseDbVersion(gdv *GooseDbVersion) error {
 	var err error
 
 	// if doesn't exist, bail
@@ -159,7 +160,7 @@ func (serviceImpl *GooseDbVersionServiceImpl) DeleteGooseDbVersion(gdv *GooseDbV
 
 	// run query
 	XOLog(sqlstr, gdv.ID)
-	_, err = db.Exec(sqlstr, gdv.ID)
+	_, err = serviceImpl.DB.Exec(sqlstr, gdv.ID)
 	if err != nil {
 		return err
 	}
@@ -172,12 +173,12 @@ func (serviceImpl *GooseDbVersionServiceImpl) DeleteGooseDbVersion(gdv *GooseDbV
 
 // GetAllGooseDbVersions returns all rows from 'public.goose_db_version',
 // ordered by "created_at" in descending order.
-func (erviceImpl *GooseDbVersionServiceImpl) GetAllGooseDbVersions(db XODB) ([]*GooseDbVersion, error) {
+func (serviceImpl *GooseDbVersionServiceImpl) GetAllGooseDbVersions() ([]*GooseDbVersion, error) {
 	const sqlstr = `SELECT ` +
 		`*` +
 		`FROM public.goose_db_version`
 
-	q, err := db.Query(sqlstr)
+	q, err := serviceImpl.DB.Query(sqlstr)
 	if err != nil {
 		return nil, err
 	}
@@ -202,12 +203,12 @@ func (erviceImpl *GooseDbVersionServiceImpl) GetAllGooseDbVersions(db XODB) ([]*
 
 // GetChunkedGooseDbVersions returns pagingated rows from 'public.goose_db_version',
 // ordered by "created_at" in descending order.
-func (serviceImpl *GooseDbVersionServiceImpl) GetChunkedGooseDbVersions(db XODB, limit int, offset int) ([]*GooseDbVersion, error) {
+func (serviceImpl *GooseDbVersionServiceImpl) GetChunkedGooseDbVersions(limit int, offset int) ([]*GooseDbVersion, error) {
 	const sqlstr = `SELECT ` +
 		`*` +
 		`FROM public.goose_db_version LIMIT $1 OFFSET $2`
 
-	q, err := db.Query(sqlstr, limit, offset)
+	q, err := serviceImpl.DB.Query(sqlstr, limit, offset)
 	if err != nil {
 		return nil, err
 	}

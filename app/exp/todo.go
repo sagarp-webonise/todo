@@ -22,25 +22,26 @@ type Todo struct {
 }
 
 type TodoService interface {
-	DoesTodoExist(t *Todo) (bool, error)
-	InsertTodo(t *Todo, db XODB) error
-	UpdateTodo(t *Todo, db XODB) error
-	UpsertTodo(t *Todo, db XODB) error
-	DeleteTodo(t *Todo, db XODB) error
-	GetAllTodos(db XODB) ([]*Todo, error)
-	GetChunkedTodos(db XODB, limit int, offset int) ([]*Todo, error)
+	DoesTodoExists(t *Todo) (bool, error)
+	InsertTodo(t *Todo) error
+	UpdateTodo(t *Todo) error
+	UpsertTodo(t *Todo) error
+	DeleteTodo(t *Todo) error
+	GetAllTodos() ([]*Todo, error)
+	GetChunkedTodos(limit int, offset int) ([]*Todo, error)
 }
 
 type TodoServiceImpl struct {
+	DB XODB
 }
 
 // Exists determines if the Todo exists in the database.
-func (serviceImpl *TodoServiceImpl) Exists(t *Todo) (bool, error) {
+func (serviceImpl *TodoServiceImpl) DoesTodoExists(t *Todo) (bool, error) {
 	panic("not yet implemented")
 }
 
 // Insert inserts the Todo to the database.
-func (serviceImpl *TodoServiceImpl) InsertTodo(t *Todo, db XODB) error {
+func (serviceImpl *TodoServiceImpl) InsertTodo(t *Todo) error {
 	var err error
 
 	// if already exist, bail
@@ -57,7 +58,7 @@ func (serviceImpl *TodoServiceImpl) InsertTodo(t *Todo, db XODB) error {
 
 	// run query
 	XOLog(sqlstr, t.Title, t.Done, t.DueDate)
-	err = db.QueryRow(sqlstr, t.Title, t.Done, t.DueDate).Scan(&t.ID)
+	err = serviceImpl.DB.QueryRow(sqlstr, t.Title, t.Done, t.DueDate).Scan(&t.ID)
 	if err != nil {
 		return err
 	}
@@ -69,7 +70,7 @@ func (serviceImpl *TodoServiceImpl) InsertTodo(t *Todo, db XODB) error {
 }
 
 // Update updates the Todo in the database.
-func (serviceImpl *TodoServiceImpl) UpdateTodo(t *Todo, db XODB) error {
+func (serviceImpl *TodoServiceImpl) UpdateTodo(t *Todo) error {
 	var err error
 
 	// if doesn't exist, bail
@@ -91,7 +92,7 @@ func (serviceImpl *TodoServiceImpl) UpdateTodo(t *Todo, db XODB) error {
 
 	// run query
 	XOLog(sqlstr, t.Title, t.Done, t.DueDate, t.ID)
-	_, err = db.Exec(sqlstr, t.Title, t.Done, t.DueDate, t.ID)
+	_, err = serviceImpl.DB.Exec(sqlstr, t.Title, t.Done, t.DueDate, t.ID)
 	return err
 }
 
@@ -109,7 +110,7 @@ func (serviceImpl *TodoServiceImpl) UpdateTodo(t *Todo, db XODB) error {
 // Upsert performs an upsert for Todo.
 //
 // NOTE: PostgreSQL 9.5+ only
-func (serviceImpl *TodoServiceImpl) UpsertTodo(t *Todo, db XODB) error {
+func (serviceImpl *TodoServiceImpl) UpsertTodo(t *Todo) error {
 	var err error
 
 	// if already exist, bail
@@ -130,7 +131,7 @@ func (serviceImpl *TodoServiceImpl) UpsertTodo(t *Todo, db XODB) error {
 
 	// run query
 	XOLog(sqlstr, t.ID, t.Title, t.Done, t.DueDate)
-	_, err = db.Exec(sqlstr, t.ID, t.Title, t.Done, t.DueDate)
+	_, err = serviceImpl.DB.Exec(sqlstr, t.ID, t.Title, t.Done, t.DueDate)
 	if err != nil {
 		return err
 	}
@@ -142,7 +143,7 @@ func (serviceImpl *TodoServiceImpl) UpsertTodo(t *Todo, db XODB) error {
 }
 
 // Delete deletes the Todo from the database.
-func (serviceImpl *TodoServiceImpl) DeleteTodo(t *Todo, db XODB) error {
+func (serviceImpl *TodoServiceImpl) DeleteTodo(t *Todo) error {
 	var err error
 
 	// if doesn't exist, bail
@@ -160,7 +161,7 @@ func (serviceImpl *TodoServiceImpl) DeleteTodo(t *Todo, db XODB) error {
 
 	// run query
 	XOLog(sqlstr, t.ID)
-	_, err = db.Exec(sqlstr, t.ID)
+	_, err = serviceImpl.DB.Exec(sqlstr, t.ID)
 	if err != nil {
 		return err
 	}
@@ -173,12 +174,12 @@ func (serviceImpl *TodoServiceImpl) DeleteTodo(t *Todo, db XODB) error {
 
 // GetAllTodos returns all rows from 'public.todo',
 // ordered by "created_at" in descending order.
-func (erviceImpl *TodoServiceImpl) GetAllTodos(db XODB) ([]*Todo, error) {
+func (serviceImpl *TodoServiceImpl) GetAllTodos() ([]*Todo, error) {
 	const sqlstr = `SELECT ` +
 		`*` +
 		`FROM public.todo`
 
-	q, err := db.Query(sqlstr)
+	q, err := serviceImpl.DB.Query(sqlstr)
 	if err != nil {
 		return nil, err
 	}
@@ -203,12 +204,12 @@ func (erviceImpl *TodoServiceImpl) GetAllTodos(db XODB) ([]*Todo, error) {
 
 // GetChunkedTodos returns pagingated rows from 'public.todo',
 // ordered by "created_at" in descending order.
-func (serviceImpl *TodoServiceImpl) GetChunkedTodos(db XODB, limit int, offset int) ([]*Todo, error) {
+func (serviceImpl *TodoServiceImpl) GetChunkedTodos(limit int, offset int) ([]*Todo, error) {
 	const sqlstr = `SELECT ` +
 		`*` +
 		`FROM public.todo LIMIT $1 OFFSET $2`
 
-	q, err := db.Query(sqlstr, limit, offset)
+	q, err := serviceImpl.DB.Query(sqlstr, limit, offset)
 	if err != nil {
 		return nil, err
 	}
