@@ -11,8 +11,7 @@ type {{ .Name }} struct {
 {{- end }}
 {{- if .PrimaryKey }}
 
-	// xo fields
-	//_exists, _deleted bool
+
 {{ end }}
 }
 
@@ -43,10 +42,6 @@ func ( serviceImpl *{{ .Name }}ServiceImpl) Does{{.Name}}Exists({{ $short }} *{{
 func (serviceImpl *{{ .Name }}ServiceImpl) Insert{{ .Name }}({{ $short }} *{{ .Name }}) error {
 	var err error
 
-	// if already exist, bail
-	/*if {{ $short }}._exists {
-		return errors.New("insert failed: already exists")
-	}*/
 
 {{ if .Table.ManualPk }}
 	// sql insert query, primary key must be provided
@@ -78,8 +73,6 @@ func (serviceImpl *{{ .Name }}ServiceImpl) Insert{{ .Name }}({{ $short }} *{{ .N
 	}
 {{ end }}
 
-	// set existence
-	//{{ $short }}._exists = true
 
 	return nil
 }
@@ -88,16 +81,6 @@ func (serviceImpl *{{ .Name }}ServiceImpl) Insert{{ .Name }}({{ $short }} *{{ .N
 	// Update updates the {{ .Name }} in the database.
 	func (serviceImpl *{{ .Name }}ServiceImpl) Update{{ .Name }}({{ $short }} *{{ .Name }}) error {
 		var err error
-
-		// if doesn't exist, bail
-		/*if !{{ $short }}._exists {
-			return errors.New("update failed: does not exist")
-		}*/
-
-		// if deleted, bail
-		/*if {{ $short }}._deleted {
-			return errors.New("update failed: marked for deletion")
-		}*/
 
 		{{ if gt ( len .PrimaryKeyFields ) 1 }}
 			// sql query with composite primary key
@@ -143,11 +126,7 @@ func (serviceImpl *{{ .Name }}ServiceImpl) Insert{{ .Name }}({{ $short }} *{{ .N
 	func (serviceImpl *{{ .Name }}ServiceImpl) Upsert{{ .Name }}({{ $short }} *{{ .Name }}) error {
 		var err error
 
-		// if already exist, bail
-		/*
-		if {{ $short }}._exists {
-			return errors.New("insert failed: already exists")
-		}*/
+
 
 		// sql query
 		const sqlstr = `INSERT INTO {{ $table }} (` +
@@ -167,8 +146,6 @@ func (serviceImpl *{{ .Name }}ServiceImpl) Insert{{ .Name }}({{ $short }} *{{ .N
 			return err
 		}
 
-		// set existence
-	//	{{ $short }}._exists = true
 
 		return nil
 }
@@ -180,15 +157,6 @@ func (serviceImpl *{{ .Name }}ServiceImpl) Insert{{ .Name }}({{ $short }} *{{ .N
 func (serviceImpl *{{ .Name }}ServiceImpl) Delete{{ .Name }}({{ $short }} *{{ .Name }}) error {
 	var err error
 
-	// if doesn't exist, bail
-	/*if !{{ $short }}._exists {
-		return nil
-	}*/
-
-	// if deleted, bail
-	/*if {{ $short }}._deleted {
-		return nil
-	}*/
 
 	{{ if gt ( len .PrimaryKeyFields ) 1 }}
 		// sql query with composite primary key
@@ -212,8 +180,6 @@ func (serviceImpl *{{ .Name }}ServiceImpl) Delete{{ .Name }}({{ $short }} *{{ .N
 		}
 	{{- end }}
 
-	// set deleted
-	//{{ $short }}._deleted = true
 
 	return nil
 }

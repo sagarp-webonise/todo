@@ -14,9 +14,6 @@ type Todo struct {
 	Done    bool      `json:"done"`     // done
 	DueDate time.Time `json:"due_date"` // due_date
 
-	// xo fields
-	//_exists, _deleted bool
-
 }
 
 type TodoService interface {
@@ -42,11 +39,6 @@ func (serviceImpl *TodoServiceImpl) DoesTodoExists(t *Todo) (bool, error) {
 func (serviceImpl *TodoServiceImpl) InsertTodo(t *Todo) error {
 	var err error
 
-	// if already exist, bail
-	/*if t._exists {
-		return errors.New("insert failed: already exists")
-	}*/
-
 	// sql insert query, primary key provided by sequence
 	const sqlstr = `INSERT INTO public.todo (` +
 		`title, done, due_date` +
@@ -61,25 +53,12 @@ func (serviceImpl *TodoServiceImpl) InsertTodo(t *Todo) error {
 		return err
 	}
 
-	// set existence
-	//t._exists = true
-
 	return nil
 }
 
 // Update updates the Todo in the database.
 func (serviceImpl *TodoServiceImpl) UpdateTodo(t *Todo) error {
 	var err error
-
-	// if doesn't exist, bail
-	/*if !t._exists {
-		return errors.New("update failed: does not exist")
-	}*/
-
-	// if deleted, bail
-	/*if t._deleted {
-		return errors.New("update failed: marked for deletion")
-	}*/
 
 	// sql query
 	const sqlstr = `UPDATE public.todo SET (` +
@@ -111,12 +90,6 @@ func (serviceImpl *TodoServiceImpl) UpdateTodo(t *Todo) error {
 func (serviceImpl *TodoServiceImpl) UpsertTodo(t *Todo) error {
 	var err error
 
-	// if already exist, bail
-	/*
-		if t._exists {
-			return errors.New("insert failed: already exists")
-		}*/
-
 	// sql query
 	const sqlstr = `INSERT INTO public.todo (` +
 		`id, title, done, due_date` +
@@ -135,25 +108,12 @@ func (serviceImpl *TodoServiceImpl) UpsertTodo(t *Todo) error {
 		return err
 	}
 
-	// set existence
-	//	t._exists = true
-
 	return nil
 }
 
 // Delete deletes the Todo from the database.
 func (serviceImpl *TodoServiceImpl) DeleteTodo(t *Todo) error {
 	var err error
-
-	// if doesn't exist, bail
-	/*if !t._exists {
-		return nil
-	}*/
-
-	// if deleted, bail
-	/*if t._deleted {
-		return nil
-	}*/
 
 	// sql query
 	const sqlstr = `DELETE FROM public.todo WHERE id = $1`
@@ -164,9 +124,6 @@ func (serviceImpl *TodoServiceImpl) DeleteTodo(t *Todo) error {
 	if err != nil {
 		return err
 	}
-
-	// set deleted
-	//t._deleted = true
 
 	return nil
 }

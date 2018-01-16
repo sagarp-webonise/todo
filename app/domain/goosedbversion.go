@@ -12,9 +12,6 @@ type GooseDbVersion struct {
 	IsApplied bool        `json:"is_applied"` // is_applied
 	Tstamp    pq.NullTime `json:"tstamp"`     // tstamp
 
-	// xo fields
-	//_exists, _deleted bool
-
 }
 
 type GooseDbVersionService interface {
@@ -40,11 +37,6 @@ func (serviceImpl *GooseDbVersionServiceImpl) DoesGooseDbVersionExists(gdv *Goos
 func (serviceImpl *GooseDbVersionServiceImpl) InsertGooseDbVersion(gdv *GooseDbVersion) error {
 	var err error
 
-	// if already exist, bail
-	/*if gdv._exists {
-		return errors.New("insert failed: already exists")
-	}*/
-
 	// sql insert query, primary key provided by sequence
 	const sqlstr = `INSERT INTO public.goose_db_version (` +
 		`version_id, is_applied, tstamp` +
@@ -59,25 +51,12 @@ func (serviceImpl *GooseDbVersionServiceImpl) InsertGooseDbVersion(gdv *GooseDbV
 		return err
 	}
 
-	// set existence
-	//gdv._exists = true
-
 	return nil
 }
 
 // Update updates the GooseDbVersion in the database.
 func (serviceImpl *GooseDbVersionServiceImpl) UpdateGooseDbVersion(gdv *GooseDbVersion) error {
 	var err error
-
-	// if doesn't exist, bail
-	/*if !gdv._exists {
-		return errors.New("update failed: does not exist")
-	}*/
-
-	// if deleted, bail
-	/*if gdv._deleted {
-		return errors.New("update failed: marked for deletion")
-	}*/
 
 	// sql query
 	const sqlstr = `UPDATE public.goose_db_version SET (` +
@@ -109,12 +88,6 @@ func (serviceImpl *GooseDbVersionServiceImpl) UpdateGooseDbVersion(gdv *GooseDbV
 func (serviceImpl *GooseDbVersionServiceImpl) UpsertGooseDbVersion(gdv *GooseDbVersion) error {
 	var err error
 
-	// if already exist, bail
-	/*
-		if gdv._exists {
-			return errors.New("insert failed: already exists")
-		}*/
-
 	// sql query
 	const sqlstr = `INSERT INTO public.goose_db_version (` +
 		`id, version_id, is_applied, tstamp` +
@@ -133,25 +106,12 @@ func (serviceImpl *GooseDbVersionServiceImpl) UpsertGooseDbVersion(gdv *GooseDbV
 		return err
 	}
 
-	// set existence
-	//	gdv._exists = true
-
 	return nil
 }
 
 // Delete deletes the GooseDbVersion from the database.
 func (serviceImpl *GooseDbVersionServiceImpl) DeleteGooseDbVersion(gdv *GooseDbVersion) error {
 	var err error
-
-	// if doesn't exist, bail
-	/*if !gdv._exists {
-		return nil
-	}*/
-
-	// if deleted, bail
-	/*if gdv._deleted {
-		return nil
-	}*/
 
 	// sql query
 	const sqlstr = `DELETE FROM public.goose_db_version WHERE id = $1`
@@ -162,9 +122,6 @@ func (serviceImpl *GooseDbVersionServiceImpl) DeleteGooseDbVersion(gdv *GooseDbV
 	if err != nil {
 		return err
 	}
-
-	// set deleted
-	//gdv._deleted = true
 
 	return nil
 }

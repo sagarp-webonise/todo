@@ -20,7 +20,7 @@ func (serviceImpl *{{ .Type.Name }}ServiceImpl){{ .FuncName }}(_{{ goparamlist .
 
 	{{ $short }} := {{ .Type.Name }}{
 	{{- if .Type.PrimaryKey }}
-		
+
 	{{ end -}}
 }
 
@@ -42,7 +42,7 @@ func (serviceImpl *{{ .Type.Name }}ServiceImpl){{ .FuncName }}(_{{ goparamlist .
 	for q.Next() {
 		{{ $short }} := {{ .Type.Name }}{
 		{{- if .Type.PrimaryKey }}
-			_exists: true,
+			
 		{{ end -}}
 		}
 
