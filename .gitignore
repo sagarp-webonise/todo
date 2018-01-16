@@ -2,6 +2,6 @@ debug
 
 .DS_Store
 
-./build.sh
+*build.sh
 
 *dbconf.yml
