@@ -17,11 +17,12 @@ func (serviceImpl *{{ .Type.Name }}ServiceImpl){{ .FuncName }}(_{{ goparamlist .
 	// run query
 	XOLog(sqlstr{{ goparamlist .Fields true false }})
 {{- if .Index.IsUnique }}
+
 	{{ $short }} := {{ .Type.Name }}{
 	{{- if .Type.PrimaryKey }}
-		_exists: true,
+		
 	{{ end -}}
-	}
+}
 
 	err = serviceImpl.DB.QueryRow(sqlstr{{ goparamlist .Fields true false }}).Scan({{ fieldnames .Type.Fields (print "&" $short) }})
 	if err != nil {
