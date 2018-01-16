@@ -4,7 +4,7 @@ import (
 	"database/sql"
 
 	"github.com/go-zoo/bone"
-	"github.com/kaddiya/todo/app/exp"
+	"github.com/kaddiya/todo/app/domain"
 	"github.com/kaddiya/todo/pkg/logger"
 	"github.com/kaddiya/todo/pkg/templates"
 )
@@ -16,5 +16,5 @@ type App struct {
 	Log            logger.ILogger
 	TplParser      templates.ITemplateParser
 	DB             *sql.DB
-	TodoSeviceImpl exp.TodoService
+	TodoSeviceImpl domain.TodoService
 }

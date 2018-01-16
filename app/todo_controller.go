@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/kaddiya/todo/app/exp"
+	"github.com/kaddiya/todo/app/domain"
 	"github.com/kaddiya/todo/pkg/framework"
 )
 
@@ -34,7 +34,7 @@ func (app *App) DisplayTodos(w http.ResponseWriter, r *http.Request) {
 	tmplList := []string{"./web/views/base.html",
 		"./web/views/todos/todo.html"}
 	data := struct {
-		Roles []*exp.Todo
+		Roles []*domain.Todo
 	}{roles}
 	res, err := app.TplParser.ParseTemplate(tmplList, data)
 	if err != nil {
@@ -44,7 +44,7 @@ func (app *App) DisplayTodos(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *App) CreateTodo(w *framework.Response, r *framework.Request) {
-	t := &exp.Todo{
+	t := &domain.Todo{
 		Title: randomString(),
 	}
 	createErr := app.TodoSeviceImpl.InsertTodo(t)
