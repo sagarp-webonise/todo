@@ -45,6 +45,8 @@ func main() {
 		DB:             dbConn,
 		TodoSeviceImpl: &domain.TodoServiceImpl{DB: dbConn},
 	}
+	//setup the logger function for the domain package
+	domain.XOLog = a.Log.LogDBQuery
 
 	a.InitRouter()
 	err := http.ListenAndServe(cfg.Port, router)

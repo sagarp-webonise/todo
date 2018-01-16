@@ -11,6 +11,7 @@ import (
 type ILogger interface {
 	Info(args ...interface{})
 	Debug(args ...interface{})
+	LogDBQuery(queryString string, args ...interface{})
 	Initialise()
 }
 
@@ -34,6 +35,16 @@ func (al *RealLogger) Debug(args ...interface{}) {
 		al.log.Debug(filepath.Base(file), "(", line, ") ", args)
 	} else {
 		al.log.Debug(args)
+	}
+}
+
+func (al *RealLogger) LogDBQuery(query string, args ...interface{}) {
+	//we need to get the 2nd caller for the DB package
+	_, file, line, ok := runtime.Caller(2)
+	if ok {
+		al.log.Info(filepath.Base(file), "(", line, ") ", query, args)
+	} else {
+		al.log.Info(query, args)
 	}
 }
 

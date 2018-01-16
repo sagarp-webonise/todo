@@ -182,7 +182,7 @@ func (serviceImpl *TodoServiceImpl) GetAllTodos() ([]*Todo, error) {
 		return nil, err
 	}
 	defer q.Close()
-
+	XOLog(sqlstr)
 	// load results
 	var res []*Todo
 	for q.Next() {
@@ -212,6 +212,8 @@ func (serviceImpl *TodoServiceImpl) GetChunkedTodos(limit int, offset int) ([]*T
 		return nil, err
 	}
 	defer q.Close()
+
+	XOLog(sqlstr, limit, offset)
 
 	// load results
 	var res []*Todo

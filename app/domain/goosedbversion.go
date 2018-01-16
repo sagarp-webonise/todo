@@ -183,7 +183,7 @@ func (serviceImpl *GooseDbVersionServiceImpl) GetAllGooseDbVersions() ([]*GooseD
 		return nil, err
 	}
 	defer q.Close()
-
+	XOLog(sqlstr)
 	// load results
 	var res []*GooseDbVersion
 	for q.Next() {
@@ -213,6 +213,8 @@ func (serviceImpl *GooseDbVersionServiceImpl) GetChunkedGooseDbVersions(limit in
 		return nil, err
 	}
 	defer q.Close()
+
+	XOLog(sqlstr, limit, offset)
 
 	// load results
 	var res []*GooseDbVersion
