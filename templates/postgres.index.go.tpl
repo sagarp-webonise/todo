@@ -5,7 +5,7 @@
 // {{ .FuncName }} retrieves a row from '{{ $table }}' as a {{ .Type.Name }}.
 //
 // Generated from index '{{ .Index.IndexName }}'.
-func (serviceImpl *{{ .Type.Name }}ServiceImpl){{ .FuncName }}(db XODB{{ goparamlist .Fields true true }}) ({{ if not .Index.IsUnique }}[]{{ end }}*{{ .Type.Name }}, error) {
+func (serviceImpl *{{ .Type.Name }}ServiceImpl){{ .FuncName }}(_{{ goparamlist .Fields true true }}) ({{ if not .Index.IsUnique }}[]{{ end }}*{{ .Type.Name }}, error) {
 	var err error
 
 	// sql query
@@ -23,7 +23,7 @@ func (serviceImpl *{{ .Type.Name }}ServiceImpl){{ .FuncName }}(db XODB{{ goparam
 	{{ end -}}
 	}
 
-	err = db.QueryRow(sqlstr{{ goparamlist .Fields true false }}).Scan({{ fieldnames .Type.Fields (print "&" $short) }})
+	err = serviceImpl.DB.QueryRow(sqlstr{{ goparamlist .Fields true false }}).Scan({{ fieldnames .Type.Fields (print "&" $short) }})
 	if err != nil {
 		return nil, err
 	}

@@ -3,39 +3,63 @@ package app
 import (
 	"errors"
 	"io"
+	"math/rand"
 	"net/http"
+	"time"
 
-	"github.com/kaddiya/todo/app/models"
+	"github.com/kaddiya/todo/app/exp"
 	"github.com/kaddiya/todo/pkg/framework"
 )
 
 func (a App) GetAllTodos(w *framework.Response, r *framework.Request) {
 
-	role, err := models.GetAllTodos(a.DB)
+	todo, err := a.TodoSeviceImpl.GetAllTodos()
 	if err != nil {
 		a.Log.Info(err.Error())
-		w.NotFound(errors.New("could not find the role"))
+		w.NotFound(errors.New("could not find the todo"))
 		return
 	}
-	a.Log.Info(role)
+	a.Log.Info(todo)
 	if err != nil {
-		panic(err)
+		w.BadRequest(err)
 		return
 	}
-	w.PutInData("roles", role)
+
+	w.PutInData("todo", todo)
 }
 
 //RenderIndex renders the index page
 func (app *App) DisplayTodos(w http.ResponseWriter, r *http.Request) {
-	roles, err := models.GetAllTodos(app.DB)
+	roles, err := app.TodoSeviceImpl.GetAllTodos()
 	tmplList := []string{"./web/views/base.html",
 		"./web/views/todos/todo.html"}
 	data := struct {
-		Roles []*models.Todo
+		Roles []*exp.Todo
 	}{roles}
 	res, err := app.TplParser.ParseTemplate(tmplList, data)
 	if err != nil {
 		app.Log.Info(err)
 	}
 	io.WriteString(w, res)
+}
+
+func (app *App) CreateTodo(w *framework.Response, r *framework.Request) {
+	t := &exp.Todo{
+		Title: randomString(),
+	}
+	createErr := app.TodoSeviceImpl.InsertTodo(t)
+	if createErr != nil {
+		app.Log.Info(createErr.Error())
+	}
+	w.PutInData("todo", t)
+}
+
+func randomString() string {
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	const chars = "abcdefghijklmnopqrstuvwxyz0123456789"
+	result := make([]byte, 5)
+	for i := range result {
+		result[i] = chars[r.Intn(len(chars))]
+	}
+	return string(result)
 }

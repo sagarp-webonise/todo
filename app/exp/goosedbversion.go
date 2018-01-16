@@ -234,7 +234,7 @@ func (serviceImpl *GooseDbVersionServiceImpl) GetChunkedGooseDbVersions(limit in
 // GooseDbVersionByID retrieves a row from 'public.goose_db_version' as a GooseDbVersion.
 //
 // Generated from index 'goose_db_version_pkey'.
-func (serviceImpl *GooseDbVersionServiceImpl) GooseDbVersionByID(db XODB, id int) (*GooseDbVersion, error) {
+func (serviceImpl *GooseDbVersionServiceImpl) GooseDbVersionByID(_, id int) (*GooseDbVersion, error) {
 	var err error
 
 	// sql query
@@ -249,7 +249,7 @@ func (serviceImpl *GooseDbVersionServiceImpl) GooseDbVersionByID(db XODB, id int
 		_exists: true,
 	}
 
-	err = db.QueryRow(sqlstr, id).Scan(&gdv.ID, &gdv.VersionID, &gdv.IsApplied, &gdv.Tstamp)
+	err = serviceImpl.DB.QueryRow(sqlstr, id).Scan(&gdv.ID, &gdv.VersionID, &gdv.IsApplied, &gdv.Tstamp)
 	if err != nil {
 		return nil, err
 	}
