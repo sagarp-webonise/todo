@@ -1,4 +1,4 @@
-# todo-conversion-portal
+# todo-app
 
 # Setup
 1. Setup postgresql on localhost.  
