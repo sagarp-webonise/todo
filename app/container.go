@@ -5,6 +5,7 @@ import (
 
 	"github.com/go-zoo/bone"
 	"github.com/kaddiya/todo/pkg/logger"
+	"github.com/kaddiya/todo/pkg/session"
 	"github.com/kaddiya/todo/pkg/templates"
 )
 
@@ -15,4 +16,5 @@ type App struct {
 	Log       logger.ILogger
 	TplParser templates.ITemplateParser
 	DB        *sql.DB
+	Session   session.Session
 }

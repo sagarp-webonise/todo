@@ -8,6 +8,7 @@ import (
 	"github.com/kaddiya/todo/app"
 	"github.com/kaddiya/todo/pkg/database"
 	"github.com/kaddiya/todo/pkg/logger"
+	"github.com/kaddiya/todo/pkg/session"
 	"github.com/kaddiya/todo/pkg/templates"
 )
 
@@ -42,6 +43,7 @@ func main() {
 		Log:       log,
 		TplParser: &templates.TemplateParser{},
 		DB:        dbConn,
+		Session:   &session.AppSession{},
 	}
 
 	a.InitRouter()
