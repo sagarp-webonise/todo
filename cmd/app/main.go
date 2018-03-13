@@ -4,12 +4,14 @@ import (
 	"errors"
 	"net/http"
 
+	redis "github.com/go-redis/redis"
 	"github.com/go-zoo/bone"
-	"github.com/kaddiya/todo/app"
-	"github.com/kaddiya/todo/pkg/database"
-	"github.com/kaddiya/todo/pkg/logger"
-	"github.com/kaddiya/todo/pkg/session"
-	"github.com/kaddiya/todo/pkg/templates"
+	"github.com/sagarp-webonise/todo/app"
+	"github.com/sagarp-webonise/todo/pkg/database"
+	"github.com/sagarp-webonise/todo/pkg/logger"
+	customRedis "github.com/sagarp-webonise/todo/pkg/redis"
+	"github.com/sagarp-webonise/todo/pkg/session"
+	"github.com/sagarp-webonise/todo/pkg/templates"
 )
 
 func main() {
@@ -37,6 +39,15 @@ func main() {
 		panic("the configuration wasnt enabled")
 	}
 
+	//initialise redis client
+	objectStorage := &customRedis.ObjectStorageWrapper{
+		InitialiseRedisClient: redis.NewClient(&redis.Options{
+			Addr:     "localhost:6379",
+			Password: "",
+			DB:       0,
+		}),
+	}
+
 	a := &app.App{
 		Router:    router,
 		Cfg:       cfg,
@@ -44,6 +55,7 @@ func main() {
 		TplParser: &templates.TemplateParser{},
 		DB:        dbConn,
 		Session:   &session.AppSession{},
+		Redis:     objectStorage,
 	}
 
 	a.InitRouter()

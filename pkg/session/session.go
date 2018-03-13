@@ -4,8 +4,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/kaddiya/todo/internal/models"
-	"github.com/kaddiya/todo/pkg/framework"
+	"github.com/sagarp-webonise/todo/app/models"
+	"github.com/sagarp-webonise/todo/pkg/framework"
 	uuid "github.com/satori/go.uuid"
 )
 

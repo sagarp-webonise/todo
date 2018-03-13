@@ -1,5 +1,5 @@
 {
-	"ImportPath": "github.com/kaddiya/todo/cmd/app",
+	"ImportPath": "github.com/sagarp-webonise/todo/cmd/app",
 	"GoVersion": "go1.9",
 	"GodepVersion": "v79",
 	"Deps": [
@@ -14,27 +14,27 @@
 			"Rev": "031b4005dfe248ccba241a0c9de0f9e112fd6b7c"
 		},
 		{
-			"ImportPath": "github.com/kaddiya/todo/app",
+			"ImportPath": "github.com/sagarp-webonise/todo/app",
 			"Rev": "8ec2134c4ee5975deff5bbf038c34ae34bb1274b"
 		},
 		{
-			"ImportPath": "github.com/kaddiya/todo/app/models",
+			"ImportPath": "github.com/sagarp-webonise/todo/app/models",
 			"Rev": "8ec2134c4ee5975deff5bbf038c34ae34bb1274b"
 		},
 		{
-			"ImportPath": "github.com/kaddiya/todo/pkg/database",
+			"ImportPath": "github.com/sagarp-webonise/todo/pkg/database",
 			"Rev": "8ec2134c4ee5975deff5bbf038c34ae34bb1274b"
 		},
 		{
-			"ImportPath": "github.com/kaddiya/todo/pkg/framework",
+			"ImportPath": "github.com/sagarp-webonise/todo/pkg/framework",
 			"Rev": "8ec2134c4ee5975deff5bbf038c34ae34bb1274b"
 		},
 		{
-			"ImportPath": "github.com/kaddiya/todo/pkg/logger",
+			"ImportPath": "github.com/sagarp-webonise/todo/pkg/logger",
 			"Rev": "8ec2134c4ee5975deff5bbf038c34ae34bb1274b"
 		},
 		{
-			"ImportPath": "github.com/kaddiya/todo/pkg/templates",
+			"ImportPath": "github.com/sagarp-webonise/todo/pkg/templates",
 			"Rev": "8ec2134c4ee5975deff5bbf038c34ae34bb1274b"
 		},
 		{

@@ -15,3 +15,13 @@ func (app *App) RenderIndex(w http.ResponseWriter, r *http.Request) {
 	}
 	io.WriteString(w, res)
 }
+
+func (app *App) RenderRegisterUserPage(w http.ResponseWriter, r *http.Request) {
+	tmplList := []string{"./web/views/base.html",
+		"./web/views/register.html"}
+	res, err := app.TplParser.ParseTemplate(tmplList, nil)
+	if err != nil {
+		app.Log.Info(err)
+	}
+	io.WriteString(w, res)
+}
