@@ -5,8 +5,8 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/kaddiya/todo/app/models"
-	"github.com/kaddiya/todo/pkg/framework"
+	"github.com/sagarp-webonise/todo/app/models"
+	"github.com/sagarp-webonise/todo/pkg/framework"
 )
 
 func (a App) GetAllTodos(w *framework.Response, r *framework.Request) {

@@ -11,6 +11,7 @@ import (
 type ILogger interface {
 	Info(args ...interface{})
 	Debug(args ...interface{})
+	Error(args ...interface{})
 	Initialise()
 }
 
@@ -29,6 +30,15 @@ func (al *RealLogger) Info(args ...interface{}) {
 }
 
 func (al *RealLogger) Debug(args ...interface{}) {
+	_, file, line, ok := runtime.Caller(1)
+	if ok {
+		al.log.Debug(filepath.Base(file), "(", line, ") ", args)
+	} else {
+		al.log.Debug(args)
+	}
+}
+
+func (al *RealLogger) Error(args ...interface{}) {
 	_, file, line, ok := runtime.Caller(1)
 	if ok {
 		al.log.Debug(filepath.Base(file), "(", line, ") ", args)
